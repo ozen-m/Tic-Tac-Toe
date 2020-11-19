@@ -16,12 +16,6 @@ class board:
           7  |  8  |  9  \n''')
         self.board = self.boardtemplate
 
-    def checkoccupied(self, move):
-        if move in self.occupied:
-            return True
-        else:
-            return False
-
     def updateboard(self, move, p):
         '''Occupy and update board.'''
         self.occupied.append(move)
@@ -59,7 +53,10 @@ class player:
     def generatemove(self, board):  # Generate move for AI
         move = None
         while move is None:
-            move = random.choice(board.possiblemoves())
+            try:
+                move = random.choice(board.possiblemoves())
+            except IndexError:
+                print('draw')
         return move
 
     def validtoken(self, token):
@@ -83,12 +80,11 @@ def checkvalidmove(move, board):
     if move not in range(1, 10):
         print('ERROR: Move value must be within 1-9.')
         return False
-    if board.checkoccupied(move):
+    if move not in board.possiblemoves():
         print(move, 'already occupied.')
         return False
     else:
         return True
-
 
 def checkwinner(p1, p2):  # Passed arg - players
     global possiblewins
@@ -103,7 +99,6 @@ def checkwinner(p1, p2):  # Passed arg - players
                     return curplayer
     return None
 
-
 def askmove(board, player):
     moveofplayer = None
     while moveofplayer is None:
@@ -115,7 +110,6 @@ def askmove(board, player):
             moveofplayer = None
     return int(moveofplayer)
 
-
 def game(player1, player2):
     p1 = player(name1, 'X')
     p2 = player(name2, 'O')
@@ -126,14 +120,21 @@ def game(player1, player2):
     winner = None
     while winner is None:
         for p in players:
+            test = tictactoe.possiblemoves()
+            if len(test) < 1 :
+                winner = 'Draw'
+                break
             pmove = askmove(tictactoe, p)
             p.curmove = pmove
             p.setmove(pmove)
             tictactoe.updateboard(pmove, p)
             print(tictactoe.board)
-        winner = checkwinner(p1, p2)
-    print(f'Winner - {winner.name}.')
-    winner.won()  # add one to winner's score
+            winner = checkwinner(p1, p2)
+    if winner != 'Draw':
+        print(f'Winner - {winner.name}.')
+        winner.won()  # add one to winner's score
+    else:
+        print('It\'s a draw!')
     tictactoe.resetboard()
 
 
