@@ -130,6 +130,8 @@ def game(player1, player2):
             tictactoe.updateboard(pmove, p)
             print(tictactoe.board)
             winner = checkwinner(p1, p2)
+            if winner is not None or winner == 'Draw':
+                break
     if winner != 'Draw':
         print(f'Winner - {winner.name}.')
         winner.won()  # add one to winner's score
