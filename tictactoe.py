@@ -23,7 +23,7 @@ class board:
             return False
 
     def updateboard(self, move, p):
-        '''Occupy and update board. Input: tuple of moves (player, move)'''
+        '''Occupy and update board.'''
         self.occupied.append(move)
         self.board = self.board.replace(str(move), p.token)
 
@@ -114,7 +114,6 @@ def askmove(board, player):
         if not checkvalidmove(moveofplayer, board):
             moveofplayer = None
     return int(moveofplayer)
-    
 
 
 def game(player1, player2):
@@ -122,7 +121,7 @@ def game(player1, player2):
     p2 = player(name2, 'O')
     tictactoe = board(p1, p2)
     players = tictactoe.players
-    print(f'Player {tictactoe.players[0].name} goes first!')
+    print(f'Player {players[0].name} goes first!')
     print(tictactoe.board)
     winner = None
     while winner is None:
@@ -149,7 +148,3 @@ if __name__ == "__main__":
         inp = input('Press any key to play again. \'Quit\' to quit.\n')
         if inp.lower() == 'quit':
             quit()
-
-
-
-
