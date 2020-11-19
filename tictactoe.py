@@ -22,13 +22,10 @@ class board:
         else:
             return False
 
-    def updateboard(self, moves):
+    def updateboard(self, move, p):
         '''Occupy and update board. Input: tuple of moves (player, move)'''
-        for player, move in moves:
-            self.board = self.board.replace(str(move), player.token)
-    
-    def updateoccupied(self, move):
         self.occupied.append(move)
+        self.board = self.board.replace(str(move), p.token)
 
     def possiblemoves(self):
         '''Return a list of possible moves.'''
@@ -107,66 +104,51 @@ def checkwinner(p1, p2):  # Passed arg - players
     return None
 
 
-def compilemoves(p1, p2):
-    '''Return tuple of token, move. Args: players'''
-    tup = (p1, p1.curmove), (p2, p2.curmove)
-    return tup
-
-
-def askmoves(board):
-    players = board.players
-    for p in players:
-        moveofplayer = None
-        while moveofplayer is None:
-            if p.name.startswith('AI') or p.name.startswith('ai'):
-                moveofplayer = p.generatemove(board)
-            else:
-                moveofplayer = input('Input move (1-9): ')
-            if not checkvalidmove(moveofplayer, board):
-                moveofplayer = None
-        p.curmove = int(moveofplayer)
-        board.updateoccupied(p.curmove)
+def askmove(board, player):
+    moveofplayer = None
+    while moveofplayer is None:
+        if player.name.startswith('AI') or player.name.startswith('ai'):
+            moveofplayer = player.generatemove(board)
+        else:
+            moveofplayer = input('Input move (1-9): ')
+        if not checkvalidmove(moveofplayer, board):
+            moveofplayer = None
+    return int(moveofplayer)
+    
 
 
 def game(player1, player2):
     p1 = player(name1, 'X')
     p2 = player(name2, 'O')
     tictactoe = board(p1, p2)
+    players = tictactoe.players
     print(f'Player {tictactoe.players[0].name} goes first!')
     print(tictactoe.board)
     winner = None
     while winner is None:
-        
-        askmoves(tictactoe)
-        playermoves = compilemoves(p1, p2)
-        for players, move in playermoves:
-            players.setmove(move)
-        tictactoe.updateboard(compilemoves(p1, p2))
-        print(tictactoe.board)
+        for p in players:
+            pmove = askmove(tictactoe, p)
+            p.curmove = pmove
+            p.setmove(pmove)
+            tictactoe.updateboard(pmove, p)
+            print(tictactoe.board)
         winner = checkwinner(p1, p2)
     print(f'Winner - {winner.name}.')
     winner.won()  # add one to winner's score
     tictactoe.resetboard()
-            
-
-
-
 
 
 if __name__ == "__main__":
-    inp = None
+    print('Welcome to Tic-Tac-Toe!')
+    print('Enter your move based on the numbers on the board.')
+    # input('Press any key to play.')
+    name1 = input('Enter Player 1\'s name: ')
+    name2 = input('Enter Player 2\'s name: ')
     while True:
-        
-        print('Welcome to Tic-Tac-Toe!')
-        print('Enter your move based on the numbers on the board.')
-        # input('Press any key to play.')
-        name1 = input('Enter Player 1\'s name: ')
-        name2 = input('Enter Player 2\'s name: ')
         game(name1, name2)
-        inp = input('Press any key to play again. \'Quit\' to quit.')
-        if inp.lower() != 'quit':
-            game(name1, name2)
-        else: quit()
+        inp = input('Press any key to play again. \'Quit\' to quit.\n')
+        if inp.lower() == 'quit':
+            quit()
 
 
 

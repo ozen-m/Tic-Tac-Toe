@@ -5,3 +5,4 @@ no ai yet
 
 todo: 
 * update the board per player move
+* if all moves are occupied = draw
